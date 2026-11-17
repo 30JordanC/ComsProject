@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windsor Shelter Form | Pilot Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#2A1A24;--cream:#F6F0EA;--sand:#ECE2D8;--card:#FFFDFB;--plum:#6B2346;--plum-soft:#F3E8ED;
+  --amber:#E8A33D;--amber-soft:#FCF1DF;--muted:#6B5B63;--line:#E4D8D0;--good:#2F6B4F;--good-soft:#E7F2EC;
+  --serif:'Source Serif 4',Georgia,serif;--sans:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --shadow:0 10px 30px rgba(42,26,36,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.5 var(--sans)}
+header{background:var(--ink);color:var(--cream);padding:20px max(20px,calc((100vw - 1200px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:10px;background:var(--plum);color:var(--amber);display:grid;place-items:center;font:700 22px var(--serif)}
+.brand strong{display:block;font:600 18px var(--serif)}
+.brand span{display:block;color:#CDBFC6;font-size:12px}
+.header-tag{border:1px solid #6E5763;border-radius:30px;padding:6px 12px;color:#E8DCE2;font-size:11px;font-weight:700;letter-spacing:.6px}
+main{max-width:1200px;margin:0 auto;padding:30px 20px 60px}
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:end;margin-bottom:22px}
+.eyebrow{color:var(--plum);font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+h1{font:600 clamp(32px,5vw,50px)/1.05 var(--serif);margin:8px 0 12px}
+.hero p{color:var(--muted);margin:0;max-width:620px}
+.never{background:var(--plum);color:var(--cream);border-radius:14px;padding:16px 18px;font-size:13px}
+.never b{color:var(--amber);display:block;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.never ul{margin:0;padding-left:18px}
+.context{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 6px}
+.ctx{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ctx .n{font:700 26px var(--serif);color:var(--plum)}
+.ctx .l{font-size:12px;color:var(--muted)}
+.src{font-size:11px;color:var(--muted);margin:4px 0 0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:22px 0 20px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tab{border:0;background:transparent;padding:10px 16px;border-radius:9px;color:var(--muted);font:700 14px var(--sans);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--cream)}
+.tab small{display:block;font-weight:500;font-size:11px;opacity:.75}
+.panel{display:none}.panel.active{display:block}
+.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin:4px 0 18px;flex-wrap:wrap}
+h2{font:600 30px/1.1 var(--serif);margin:4px 0 6px}
+h3{font:600 18px var(--serif);margin:0 0 10px}
+.sub{color:var(--muted);margin:0;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.grid.even{grid-template-columns:1fr 1fr}
+.stack>*+*{margin-top:18px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}
+label{font-size:12px;font-weight:700;color:#4F3F48}
+input,select,textarea{width:100%;border:1px solid #D9CBC3;border-radius:9px;background:#fff;padding:10px 12px;color:var(--ink);font:inherit;font-size:14px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--plum);box-shadow:0 0 0 3px #6B234620}
+textarea{min-height:90px;resize:vertical}
+.help{font-size:11px;color:var(--muted)}
+.btn{border:0;border-radius:9px;padding:10px 15px;background:var(--plum);color:#fff;font:700 13px var(--sans);cursor:pointer}
+.btn:hover{filter:brightness(.94)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.dark{background:var(--ink)}
+.btn.small{padding:6px 10px;font-size:12px}
+.btn.good{background:var(--good)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.notice{padding:11px 13px;border-radius:10px;background:var(--plum-soft);border:1px solid #E6D3DC;color:#5A2C42;font-size:12px;margin-bottom:14px}
+.notice.warn{background:var(--amber-soft);border-color:#F0DDBA;color:#6E4F1C}
+.consent{border:1px dashed #D3C2B9;border-radius:12px;padding:12px;background:#FFFCF8}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:13px;font-weight:600;color:var(--ink)}
+.check input{width:auto;margin-top:3px}
+.idrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.ai-box{background:#FBF6F9;border:1px solid #E9D9E1;border-radius:12px;padding:14px;margin-top:12px}
+.ai-label{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--plum);text-transform:uppercase;margin-bottom:6px}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{display:inline-block;border-radius:30px;padding:4px 9px;font-size:11px;font-weight:700;background:#fff;border:1px solid #E1D0D9;color:#5A2C42}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px}
+.kpi .num{font:700 32px var(--serif);color:var(--ink)}
+.kpi.hl{background:var(--plum);border-color:var(--plum)}
+.kpi.hl .num,.kpi.hl .label{color:var(--cream)}
+.kpi .label{font-size:12px;color:var(--muted)}
+.insight{background:var(--ink);color:var(--cream);border-radius:12px;padding:14px 16px;font-size:14px;margin-bottom:18px}
+.insight b{color:var(--amber)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:9px;border-bottom:1px solid var(--line)}
+td{padding:10px 9px;border-bottom:1px solid #F0E7E1;vertical-align:top}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;border-radius:30px;padding:3px 8px;font-size:10px;font-weight:800;background:#EFE7E2;color:#5C4A53;white-space:nowrap}
+.pill.review{background:var(--amber-soft);color:#7A5418}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.plum{background:var(--plum-soft);color:var(--plum)}
+.bar-row{display:grid;grid-template-columns:160px 1fr 34px;align-items:center;gap:10px;margin:9px 0;font-size:12px}
+.bar{height:10px;background:#F0E7E1;border-radius:20px;overflow:hidden}
+.bar span{height:100%;display:block;background:var(--plum);border-radius:20px}
+.bar span.amber{background:var(--amber)}
+.days{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:6px}
+.day{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.day .col{width:100%;background:var(--plum);border-radius:5px 5px 0 0;min-height:2px}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+.review-item{border:1px solid #F0DDBA;background:var(--amber-soft);border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px}
+.review-item .why{color:#6E4F1C;font-size:12px;margin:4px 0 8px}
+.status{font-size:12px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--cream);padding:11px 16px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:9;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{max-width:1200px;margin:0 auto;padding:0 20px 30px;color:#8A7A82;font-size:11px}
+@media(max-width:900px){.grid,.grid.even,.hero{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.context{grid-template-columns:1fr}}
+@media(max-width:520px){header{padding:16px}.header-tag{display:none}main{padding:22px 14px 50px}.card{padding:15px}.form-grid,.idrow{grid-template-columns:1fr}.field.full{grid-column:auto}.bar-row{grid-template-columns:110px 1fr 30px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">W</div><div><strong>Windsor Shelter Form</strong><span>AI pilot concept for the Welcome Centre Shelter for Women &amp; Families</span></div></div>
+  <div class="header-tag">DEMO PROTOTYPE · FICTIONAL DATA ONLY</div>
+</header>
+
+<main>
+  <div class="hero">
+    <div>
+      <div class="eyebrow">90-day pilot · Prove · Persuade · Protect</div>
+      <h1>Count every woman once.<br>Win the case. Give time back.</h1>
+      <p>A walkthrough of the three tools in our recommendation: a smart turn-away log that counts unique women, a dashboard and AI-drafted report the City can trust, and an assistant that cuts staff paperwork.</p>
+    </div>
+    <div class="never"><b>Never automated</b><ul><li>Answering the call and the conversation with a woman in crisis</li><li>Deciding who gets a bed</li><li>Confirming that two requests are the same woman</li><li>Approving any report or note</li></ul></div>
+  </div>
+
+  <div class="context">
+    <div class="ctx"><div class="n">454</div><div class="l">turn-away calls, June 15 – July 21, 2026</div></div>
+    <div class="ctx"><div class="n">150</div><div class="l">individual women behind those calls</div></div>
+    <div class="ctx"><div class="n">99%</div><div class="l">occupancy of single-women beds</div></div>
+  </div>
+  <p class="src">Real-world context: Maru, S. (2026, July 27), CTV News Windsor. Demo entries below are fictional and separate from these figures.</p>
+
+  <nav class="tabs" role="tablist" aria-label="Pilot tools">
+    <button class="tab" role="tab" aria-selected="true" data-tab="prove">01 · Prove<small>Smart turn-away log</small></button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="persuade">02 · Persuade<small>Dashboard + report</small></button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="protect">03 · Protect<small>Staff admin assistant</small></button>
+  </nav>
+
+  <!-- ================= PROVE ================= -->
+  <section class="panel active" id="prove" role="tabpanel">
+    <div class="section-head">
+      <div><div class="eyebrow">Tool 1 · Prove</div><h2>Log a turn-away in under a minute</h2><p class="sub">Staff support the caller first. Afterward: quick note → AI suggests fields → staff confirm → save.</p></div>
+      <div class="actions" style="margin:0"><button class="btn secondary small" id="sampleBtn">Load a sample week</button><button class="btn secondary small" id="clearBtn">Clear demo data</button></div>
+    </div>
+    <div class="notice warn"><strong>Privacy safeguard:</strong> fictional data only. Never enter real names, phone numbers, addresses or case details. Entries stay in this browser tab and disappear on refresh.</div>
+    <div class="grid">
+      <div class="card">
+        <h3>Step 1 · Quick staff note</h3>
+        <div class="field"><label for="quickNote">Type or dictate what happened (no identifying details)</label>
+          <textarea id="quickNote" placeholder="Example: Woman in her 40s, sister's couch no longer safe, referred by hospital ER, says she'll sleep in her car tonight."></textarea></div>
+        <div class="actions"><button type="button" class="btn dark" id="assistBtn">✦ Suggest fields from note</button></div>
+        <div class="ai-box" id="assistBox" hidden>
+          <div class="ai-label">AI suggestion · simulated in this demo</div>
+          <div class="sugg" id="suggChips"></div>
+          <div class="actions" style="margin-top:6px"><button type="button" class="btn small" id="applyBtn">Apply to form</button><span class="help">Staff check every field before saving.</span></div>
+        </div>
+
+        <h3 style="margin-top:22px">Step 2 · Confirm the fields</h3>
+        <form id="intakeForm">
+          <div class="form-grid">
+            <div class="field"><label for="date">Date</label><input id="date" type="date" required></div>
+            <div class="field"><label for="time">Approximate time</label><input id="time" type="time"></div>
+            <div class="field"><label for="need">Household type</label><select id="need"><option>Single woman</option><option>Woman with children / family</option><option>Accessible bed needed</option><option>Not stated</option></select></div>
+            <div class="field"><label for="age">Age range (if shared)</label><select id="age"><option>Not stated</option><option>Under 25</option><option>25–39</option><option>40–54</option><option>55+</option></select></div>
+            <div class="field"><label for="referral">Referral source</label><select id="referral"><option>Self-referral</option><option>Hospital / health provider</option><option>Community agency</option><option>Police / emergency services</option><option>Not stated</option></select></div>
+            <div class="field"><label for="reason">Why no bed?</label><select id="reason"><option>All women-only beds full</option><option>No family unit available</option><option>No accessible bed available</option><option>Other capacity reason</option></select></div>
+            <div class="field full"><label for="destination">Where will she go tonight? (only if she chose to share)</label><select id="destination"><option>Car / vehicle</option><option>Street / park / outdoors</option><option>Unsafe home</option><option>Co-ed shelter</option><option>Friend / family</option><option>Not shared</option></select></div>
+          </div>
+
+          <h3 style="margin-top:20px">Step 3 · Anonymous ID (only with her consent)</h3>
+          <div class="consent">
+            <label class="check"><input type="checkbox" id="consent"> She agreed to share a few details so we can count her once. (She is helped the same way either way.)</label>
+            <div class="idrow" id="idFields" hidden>
+              <div class="field"><label for="initial">First initial</label><input id="initial" maxlength="1" placeholder="e.g. M"></div>
+              <div class="field"><label for="birthYear">Birth year</label><input id="birthYear" type="number" min="1930" max="2012" placeholder="e.g. 1984"></div>
+              <div class="field"><label for="last4">Callback no. last 4 (optional)</label><input id="last4" maxlength="4" inputmode="numeric" placeholder="e.g. 0000"></div>
+            </div>
+            <p class="help" style="margin:8px 0 0">These details are instantly scrambled into a code (a one-way “hash”). The log stores only the code, never the details.</p>
+          </div>
+          <div class="actions"><button class="btn" type="submit">Save turn-away</button></div>
+        </form>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h3>Weekly match review</h3>
+          <p class="sub" style="margin-bottom:12px">When details are close but not identical, the system only <b>flags</b> a possible repeat. A staff member decides.</p>
+          <div id="reviewQueue"><div class="empty">No possible matches to review.</div></div>
+        </div>
+        <div class="card">
+          <h3>How women are counted</h3>
+          <div class="ai-box" style="margin-top:0"><div class="ai-label">Counting rules</div>
+            <div style="font-size:13px;color:#4F3F48">• Every saved form = one <b>request</b>.<br>• Same scrambled code = same woman (exact match).<br>• Similar but not identical details = <b>flagged</b> for staff review, never merged automatically.<br>• No consent = <b>anonymous request</b>, counted as a request but never as a confirmed unique woman.<br>• Categories follow HIFIS definitions, to be confirmed with City staff.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Latest entries</h3>
+          <div id="recent"><div class="empty">No entries yet.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PERSUADE ================= -->
+  <section class="panel" id="persuade" role="tabpanel">
+    <div class="section-head">
+      <div><div class="eyebrow">Tool 2 · Persuade</div><h2>Demand dashboard</h2><p class="sub">Updates live from the Prove log. Built to answer the City’s question: how many <i>different</i> women?</p></div>
+      <div class="actions" style="margin:0"><label for="occ" class="help" style="align-self:center">Women-only occupancy</label><input id="occ" type="number" min="0" max="100" value="99" style="width:80px"><button class="btn secondary small" id="exportBtn">↓ HIFIS-aligned CSV</button></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="num" id="kRequests">0</div><div class="label">Turn-away requests</div></div>
+      <div class="kpi hl"><div class="num" id="kUnique">0</div><div class="label">Unique women (confirmed)</div></div>
+      <div class="kpi"><div class="num" id="kRepeat">0</div><div class="label">Repeat requests</div></div>
+      <div class="kpi"><div class="num" id="kAnon">0</div><div class="label">Anonymous requests</div></div>
+      <div class="kpi"><div class="num" id="kReview">0</div><div class="label">Awaiting staff review</div></div>
+    </div>
+    <div class="insight" id="insight">Log some turn-aways (or load the sample week) to see the evidence build.</div>
+    <div class="grid even">
+      <div class="card"><h3>Where women went instead</h3><p class="sub" style="margin-bottom:6px">Answers “there are open beds elsewhere.” Shown only when she chose to share.</p><div id="destBars"><div class="empty">No data yet.</div></div></div>
+      <div class="card"><h3>Requests by day</h3><p class="sub">Last 10 days logged</p><div id="dayChart"><div class="empty">No data yet.</div></div></div>
+      <div class="card"><h3>Referral sources</h3><div id="refBars"><div class="empty">No data yet.</div></div></div>
+      <div class="card"><h3>Why there was no bed</h3><div id="reasonBars"><div class="empty">No data yet.</div></div></div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="section-head" style="margin-bottom:8px"><div><h3>AI-drafted monthly evidence report</h3><p class="sub">Drafted only from the log above. The Executive Director checks every figure before anything leaves the building.</p></div><span class="status" id="reportStatus"><span class="pill">No draft</span></span></div>
+      <div class="actions" style="margin-top:0"><button class="btn dark" id="reportBtn">✦ Draft report</button></div>
+      <textarea id="reportText" style="margin-top:12px;min-height:230px" placeholder="The draft report will appear here. It stays editable."></textarea>
+      <div class="actions">
+        <label class="check"><input type="checkbox" id="edCheck" disabled> Executive Director: I have verified every figure in this draft.</label>
+        <button class="btn good" id="copyReportBtn" disabled>Approve &amp; copy</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="section-head" style="margin-bottom:6px"><div><h3>Audit trail</h3><p class="sub">Every number above can be traced to these records.</p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Date</th><th>Code</th><th>Household</th><th>Referral</th><th>Went to</th><th>Status</th></tr></thead><tbody id="auditTable"><tr><td colspan="6" class="empty">No records yet.</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- ================= PROTECT ================= -->
+  <section class="panel" id="protect" role="tabpanel">
+    <div class="section-head">
+      <div><div class="eyebrow">Tool 3 · Protect</div><h2>Staff admin assistant</h2><p class="sub">After a conversation (never during it), staff jot or dictate a few points. AI drafts the note. Staff correct and approve.</p></div>
+      <span class="pill plum">Human approval required</span>
+    </div>
+    <div class="grid even">
+      <div class="card">
+        <div class="notice warn">Fictional, non-identifying content only. No recordings of women: staff summarize in their own words.</div>
+        <div class="form-grid">
+          <div class="field"><label for="mode">Draft type</label><select id="mode"><option value="handover">Shift handover</option><option value="note">Case note</option></select></div>
+          <div class="field"><label for="shift">Shift / date</label><input id="shift" placeholder="e.g. Overnight · Nov 16"></div>
+        </div>
+        <div class="field" style="margin-top:12px"><label for="bullets">Staff points</label>
+          <textarea id="bullets" style="min-height:170px" placeholder="• 4 turn-aways tonight, all women-only beds full&#10;• Resident in room 6 settled after a hard evening, check in at breakfast&#10;• Follow up with housing worker re: apartment viewing Thursday&#10;• Front entrance light still out"></textarea></div>
+        <div class="actions"><button class="btn dark" id="draftBtn">✦ Draft</button><button class="btn secondary small" id="exampleBtn">Use example points</button></div>
+      </div>
+      <div class="card">
+        <h3>Draft for staff review</h3>
+        <div class="ai-label">AI draft · simulated in this demo</div>
+        <textarea id="draftOut" style="min-height:270px" placeholder="The structured draft will appear here. Edit anything that is wrong."></textarea>
+        <div class="actions">
+          <label class="check"><input type="checkbox" id="staffCheck" disabled> I was there, and I reviewed and corrected this draft.</label>
+          <button class="btn good" id="saveDraftBtn" disabled>Approve &amp; save</button>
+        </div>
+        <p class="help" id="savedCount">Approved drafts this session: 0</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Where AI helps and where people lead</h3>
+      <div class="grid even">
+        <div><span class="pill plum">AI assists (behind the scenes)</span><p class="sub" style="margin-top:8px">Turns quick notes into clean fields · flags possible repeat callers · builds the dashboard · drafts reports, case notes and handovers.</p></div>
+        <div><span class="pill good">People lead (always)</span><p class="sub" style="margin-top:8px">Answer every call · provide trauma-informed support · decide who gets a bed · confirm every match · approve every note and report.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>Concept prototype for a class presentation. Not affiliated with or endorsed by the Welcome Centre. Not connected to HIFIS, a live AI model or any shelter database; “AI” steps are simulated with simple rules. A real pilot would use the shelter’s nonprofit AI accounts and require privacy, consent, security, retention and City/HIFIS review.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const todayISO = () => new Date().toISOString().slice(0,10);
+let records = [];      // {id,date,time,need,age,referral,reason,destination,code,personId,status}
+let reviews = [];      // {recordId,candidateId,why}
+let persons = {};      // personId -> code
+let personSeq = 0, recSeq = 0, savedDrafts = 0;
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2600); }
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === btn ? 'true' : 'false'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === btn.dataset.tab));
+  if (btn.dataset.tab === 'persuade') renderDashboard();
+}));
+
+/* ---------- Step 1: simulated AI field suggestions ---------- */
+function suggestFromNote(note){
+  const n = note.toLowerCase(), s = {};
+  if (/wheelchair|accessib|mobility|walker/.test(n)) s.need = 'Accessible bed needed';
+  else if (/child|kid|son|daughter|baby|toddler|family|pregnan/.test(n)) s.need = 'Woman with children / family';
+  else if (n.trim()) s.need = 'Single woman';
+  const age = n.match(/(\d{2})\s*'?s\b/) || n.match(/~\s*(\d{2})\b/) || n.match(/\bage[d]?\s*(\d{2})\b/);
+  if (age){ const a = +age[1]; s.age = a < 25 ? 'Under 25' : a < 40 ? '25–39' : a < 55 ? '40–54' : '55+'; }
+  if (/hospital|\ber\b|nurse|doctor|clinic/.test(n)) s.referral = 'Hospital / health provider';
+  else if (/police|officer|911|paramedic|ems/.test(n)) s.referral = 'Police / emergency services';
+  else if (/agency|worker|outreach|mission|cmha|program/.test(n)) s.referral = 'Community agency';
+  else if (/called herself|self|walked in|on her own/.test(n)) s.referral = 'Self-referral';
+  if (/no longer safe|not safe|unsafe|abus|ex[- ]?partner|violen/.test(n)) s.destination = 'Unsafe home';
+  else if (/\bcar\b|vehicle|van\b/.test(n)) s.destination = 'Car / vehicle';
+  else if (/street|park|outside|outdoor|tent|encampment|bench/.test(n)) s.destination = 'Street / park / outdoors';
+  else if (/co-?ed|downtown mission|other shelter/.test(n)) s.destination = 'Co-ed shelter';
+  else if (/friend|sister|mom|mother|cousin|aunt|family/.test(n)) s.destination = 'Friend / family';
+  if (s.need === 'Woman with children / family') s.reason = 'No family unit available';
+  else if (s.need === 'Accessible bed needed') s.reason = 'No accessible bed available';
+  else if (n.trim()) s.reason = 'All women-only beds full';
+  return s;
+}
+let lastSugg = {};
+$('assistBtn').addEventListener('click', () => {
+  const note = $('quickNote').value.trim();
+  if (!note){ toast('Add a quick note first.'); return; }
+  lastSugg = suggestFromNote(note);
+  const labels = {need:'Household',age:'Age range',referral:'Referral',reason:'Why no bed',destination:'Tonight'};
+  const keys = Object.keys(lastSugg);
+  $('suggChips').innerHTML = keys.length ? keys.map(k => `<span class="chip">${labels[k]}: ${esc(lastSugg[k])}</span>`).join('') : '<span class="help">No fields recognised. Fill the form manually.</span>';
+  $('assistBox').hidden = false;
+});
+$('applyBtn').addEventListener('click', () => {
+  Object.entries(lastSugg).forEach(([k,v]) => { if ($(k)) $(k).value = v; });
+  toast('Suggestions applied. Please check each field.');
+});
+
+/* ---------- consent + hashing ---------- */
+$('consent').addEventListener('change', e => { $('idFields').hidden = !e.target.checked; });
+async function hashCode(initial, year, last4){
+  const data = new TextEncoder().encode(`${initial.toUpperCase()}|${year}|${last4}|demo-salt`);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return 'ID-' + [...new Uint8Array(buf)].slice(0,3).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+// keep the raw parts only in memory for the fuzzy check, as a stand-in for a privacy-preserving matcher
+const fuzzyKeys = {}; // personId -> {initial, year, hasLast4}
+
+async function addRecord(r, idParts){
+  r.id = ++recSeq;
+  if (!idParts){ r.code = 'Anonymous'; r.personId = null; r.status = 'anonymous'; records.push(r); return r; }
+  const {initial, year, last4} = idParts;
+  const code = await hashCode(initial, year, last4 || '');
+  r.code = code;
+  const exact = Object.entries(persons).find(([pid,c]) => c === code);
+  if (exact){ r.personId = exact[0]; r.status = 'repeat'; records.push(r); return r; }
+  const cand = Object.entries(fuzzyKeys).find(([pid,k]) => k.initial === initial.toUpperCase() && Math.abs(k.year - year) <= 1);
+  if (cand){
+    r.personId = null; r.status = 'review'; r._pending = {initial:initial.toUpperCase(), year, hasLast4: !!last4};
+    const k = cand[1];
+    const why = [`same first initial (${k.initial})`, k.year === year ? 'same birth year' : `birth year within 1 (${k.year} vs ${year})`, (k.hasLast4 && last4) ? 'different callback digits' : 'callback digits missing on one request'].join(', ');
+    reviews.push({recordId: r.id, candidateId: cand[0], why});
+    records.push(r); return r;
+  }
+  const pid = 'P' + (++personSeq);
+  persons[pid] = code; fuzzyKeys[pid] = {initial: initial.toUpperCase(), year, hasLast4: !!last4};
+  r.personId = pid; r.status = 'new'; records.push(r); return r;
+}
+
+$('intakeForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const r = {date:$('date').value, time:$('time').value, need:$('need').value, age:$('age').value, referral:$('referral').value, reason:$('reason').value, destination:$('destination').value};
+  let idParts = null;
+  if ($('consent').checked){
+    const initial = $('initial').value.trim(), year = +$('birthYear').value, last4 = $('last4').value.trim();
+    if (!/^[A-Za-z]$/.test(initial) || !year){ toast('With consent, add at least a first initial and birth year.'); return; }
+    if (last4 && !/^\d{4}$/.test(last4)){ toast('Callback digits must be exactly 4 numbers.'); return; }
+    idParts = {initial, year, last4};
+  }
+  const rec = await addRecord(r, idParts);
+  e.target.reset(); $('date').value = todayISO(); $('idFields').hidden = true; $('assistBox').hidden = true; $('quickNote').value = '';
+  const msg = {anonymous:'Saved as an anonymous request.', new:`Saved. New woman counted (${rec.code}).`, repeat:`Saved. Exact code match: repeat request from ${rec.code}.`, review:'Saved. Possible repeat flagged for staff review.'}[rec.status];
+  toast(msg + ' Nothing left this browser.');
+  renderAll();
+});
+
+/* ---------- review queue ---------- */
+function decide(recordId, same){
+  const i = reviews.findIndex(x => x.recordId === recordId); if (i < 0) return;
+  const rv = reviews.splice(i,1)[0]; const r = records.find(x => x.id === recordId);
+  if (same){ r.personId = rv.candidateId; r.status = 'repeat'; toast('Confirmed by staff: same woman. Counted once.'); }
+  else { const pid = 'P' + (++personSeq); persons[pid] = r.code; fuzzyKeys[pid] = r._pending; r.personId = pid; r.status = 'new'; toast('Confirmed by staff: different woman. Counted separately.'); }
+  delete r._pending; renderAll();
+}
+function renderReview(){
+  $('reviewQueue').innerHTML = reviews.length ? reviews.map(rv => {
+    const r = records.find(x => x.id === rv.recordId); const c = persons[rv.candidateId];
+    return `<div class="review-item"><b>${esc(r.code)}</b> on ${esc(r.date)} may be the same woman as <b>${esc(c)}</b>.<div class="why">Why flagged: ${esc(rv.why)}.</div><div class="actions" style="margin-top:0"><button class="btn small good" onclick="decide(${rv.recordId},true)">Same woman</button><button class="btn small secondary" onclick="decide(${rv.recordId},false)">Different woman</button></div></div>`;
+  }).join('') : '<div class="empty">No possible matches to review.</div>';
+}
+
+/* ---------- labels ---------- */
+const statusPill = s => ({new:'<span class="pill good">New woman</span>', repeat:'<span class="pill plum">Repeat request</span>', review:'<span class="pill review">Needs staff review</span>', anonymous:'<span class="pill">Anonymous request</span>'})[s];
+
+function renderRecent(){
+  const rows = [...records].sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time)).slice(0,6);
+  $('recent').innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Code</th><th>Status</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r.date)}</td><td>${esc(r.code)}</td><td>${statusPill(r.status)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">No entries yet.</div>';
+}
+
+/* ---------- metrics ---------- */
+function metrics(){
+  const total = records.length;
+  const byPerson = {}; records.forEach(r => { if (r.personId) byPerson[r.personId] = (byPerson[r.personId]||0) + 1; });
+  const unique = Object.keys(byPerson).length;
+  const repeat = Object.values(byPerson).reduce((a,n) => a + Math.max(0,n-1), 0);
+  const anon = records.filter(r => r.status === 'anonymous').length;
+  const review = records.filter(r => r.status === 'review').length;
+  const linked = total - anon - review;
+  const multi = Object.values(byPerson).filter(n => n > 1).length;
+  const dates = records.map(r => r.date).sort();
+  return {total, unique, repeat, anon, review, linked, multi, from: dates[0], to: dates[dates.length-1]};
+}
+function countBy(key){ const m = {}; records.forEach(r => m[r[key]] = (m[r[key]]||0) + 1); return Object.entries(m).sort((a,b) => b[1]-a[1]); }
+function bars(entries, el, amberSet){
+  const max = Math.max(1, ...entries.map(e => e[1]));
+  $(el).innerHTML = entries.length ? entries.map(([k,n]) => `<div class="bar-row"><span>${esc(k)}</span><div class="bar"><span class="${amberSet && amberSet.includes(k) ? 'amber' : ''}" style="width:${100*n/max}%"></span></div><b>${n}</b></div>`).join('') : '<div class="empty">No data yet.</div>';
+}
+const NO_SAFE = ['Car / vehicle','Street / park / outdoors','Unsafe home'];
+
+function renderDashboard(){
+  const m = metrics();
+  $('kRequests').textContent = m.total; $('kUnique').textContent = m.unique; $('kRepeat').textContent = m.repeat; $('kAnon').textContent = m.anon; $('kReview').textContent = m.review;
+  if (m.total){
+    const noSafe = records.filter(r => NO_SAFE.includes(r.destination)).length;
+    const shared = records.filter(r => r.destination !== 'Not shared').length;
+    const avg = m.unique ? (m.linked / m.unique).toFixed(1) : '–';
+    $('insight').innerHTML = `<b>${m.linked}</b> linked requests came from <b>${m.unique}</b> different women (about <b>${avg}</b> requests each), plus <b>${m.anon}</b> anonymous requests. Of women who said where they were going, <b>${shared ? Math.round(100*noSafe/shared) : 0}%</b> had no safe place: a car, the street or an unsafe home.`;
+  } else $('insight').textContent = 'Log some turn-aways (or load the sample week) to see the evidence build.';
+  bars(countBy('destination'), 'destBars', NO_SAFE);
+  bars(countBy('referral'), 'refBars');
+  bars(countBy('reason'), 'reasonBars');
+  const days = countBy('date').sort((a,b) => a[0].localeCompare(b[0])).slice(-10);
+  const dmax = Math.max(1, ...days.map(d => d[1]));
+  $('dayChart').innerHTML = days.length ? `<div class="days">${days.map(([d,n]) => `<div class="day"><b style="color:var(--ink)">${n}</b><div class="col" style="height:${80*n/dmax}px"></div>${esc(d.slice(5))}</div>`).join('')}</div>` : '<div class="empty">No data yet.</div>';
+  const rows = [...records].sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time));
+  $('auditTable').innerHTML = rows.length ? rows.map(r => `<tr><td>${esc(r.date)}</td><td>${esc(r.code)}</td><td>${esc(r.need)}</td><td>${esc(r.referral)}</td><td>${esc(r.destination)}</td><td>${statusPill(r.status)}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">No records yet.</td></tr>';
+}
+
+/* ---------- AI-drafted report (simulated) ---------- */
+$('reportBtn').addEventListener('click', () => {
+  const m = metrics();
+  if (!m.total){ toast('No records yet. Log turn-aways or load the sample week.'); return; }
+  const dest = countBy('destination').map(([k,n]) => `  • ${k}: ${n}`).join('\n');
+  const ref = countBy('referral').map(([k,n]) => `  • ${k}: ${n}`).join('\n');
+  const noSafe = records.filter(r => NO_SAFE.includes(r.destination)).length;
+  $('reportText').value =
+`WELCOME CENTRE · TURN-AWAY EVIDENCE REPORT (DRAFT, FICTIONAL DEMO DATA)
+Period: ${m.from} to ${m.to}
+Prepared for: City of Windsor Housing and Homelessness staff
+
+KEY FINDINGS
+• We could not offer a bed ${m.total} times in this period.
+• ${m.linked} of those requests came from ${m.unique} different women, each confirmed by a unique anonymous code. ${m.multi} of these women asked more than once.
+• ${m.anon} further requests were anonymous. We count them as requests only, not as unique women.
+• ${m.review} possible repeats are still awaiting staff review and are not yet included in the unique count.
+• Women-only bed occupancy: ${$('occ').value || '–'}%.
+
+WHERE WOMEN WENT INSTEAD (when they chose to share)
+${dest}
+• ${noSafe} requests ended with no safe place to sleep (car, outdoors or an unsafe home).
+
+REFERRAL SOURCES
+${ref}
+
+HOW WE COUNT
+Every turn-away is logged. With a woman’s consent, a few details are scrambled into a one-way code so repeat requests are counted once. Similar but non-identical details are reviewed by staff, never merged automatically. Categories follow HIFIS definitions agreed with City staff.
+
+[ED TO ADD: context, a short story shared with consent, and the funding request.]`;
+  $('edCheck').disabled = false; $('edCheck').checked = false; $('copyReportBtn').disabled = true;
+  $('reportStatus').innerHTML = '<span class="pill review">Draft · awaiting ED review</span>';
+});
+$('edCheck').addEventListener('change', e => { $('copyReportBtn').disabled = !e.target.checked; });
+$('reportText').addEventListener('input', () => { if ($('edCheck').checked){ $('edCheck').checked = false; $('copyReportBtn').disabled = true; $('reportStatus').innerHTML = '<span class="pill review">Edited · re-verify</span>'; } });
+$('copyReportBtn').addEventListener('click', () => {
+  copyText($('reportText').value);
+  $('reportStatus').innerHTML = '<span class="pill good">Approved by ED</span>';
+});
+
+/* ---------- export ---------- */
+$('exportBtn').addEventListener('click', () => {
+  if (!records.length){ toast('Nothing to export yet.'); return; }
+  const head = ['TurnawayDate','Time','ClientRef','LinkStatus','HouseholdType','AgeRange','ReferralSource','TurnawayReason','ExpectedLocationTonight'];
+  const rows = records.map(r => [r.date, r.time, r.code, r.status, r.need, r.age, r.referral, r.reason, r.destination]);
+  const csv = [head, ...rows].map(row => row.map(v => '"' + String(v ?? '').replace(/"/g,'""') + '"').join(',')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download = 'turnaways-demo-hifis-aligned.csv'; a.click(); URL.revokeObjectURL(a.href);
+  toast('Exported. Column names are illustrative, to confirm with City/HIFIS staff.');
+});
+
+function copyText(text){
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Copied.')).catch(() => toast('Copy failed. Select the text and copy manually.'));
+  else toast('Select the text and copy manually.');
+}
+
+/* ---------- Tool 3: drafts (simulated) ---------- */
+$('exampleBtn').addEventListener('click', () => {
+  $('bullets').value = $('mode').value === 'handover'
+    ? '4 turn-aways tonight, all women-only beds full\nResident in room 6 settled after a hard evening, check in at breakfast\nFollow up with housing worker re: apartment viewing Thursday\nFront entrance light still out\nTwo family units occupied, one checkout expected tomorrow'
+    : 'Met with resident to review housing options\nShe is interested in the apartment viewing Thursday\nShared that she feels safer since arriving\nFollow up: book transit for viewing, call housing worker\nNo concerns raised about her stay';
+});
+$('draftBtn').addEventListener('click', () => {
+  const lines = $('bullets').value.split('\n').map(s => s.replace(/^[•\-*]\s*/,'').trim()).filter(Boolean);
+  if (!lines.length){ toast('Add a few points first (or use the example).'); return; }
+  const isFollow = l => /follow|call|book|check in|schedule|remind|referr|viewing/i.test(l);
+  const isFac = l => /light|door|maintenance|repair|leak|heat|broken|supplies/i.test(l);
+  const isTurn = l => /turn-?away|beds? full|no bed|occupied|checkout|capacity/i.test(l);
+  const list = a => a.length ? a.map(x => '• ' + x).join('\n') : '• None noted';
+  const head = $('shift').value.trim() || 'Shift/date not specified';
+  let out;
+  if ($('mode').value === 'handover'){
+    const isRes = l => /resident|room \d|settled|guest|she |her /i.test(l);
+    const turn = lines.filter(isTurn), fac = lines.filter(l => isFac(l) && !isTurn(l));
+    const res = lines.filter(l => isRes(l) && !turn.includes(l) && !fac.includes(l));
+    const fol = lines.filter(l => !turn.includes(l) && !fac.includes(l) && !res.includes(l));
+    out = `SHIFT HANDOVER · DRAFT\n${head}\n\nCAPACITY & TURN-AWAYS\n${list(turn)}\n\nRESIDENTS\n${list(res)}\n\nFOLLOW-UP FOR NEXT SHIFT\n${list(fol)}\n\nFACILITIES\n${list(fac)}\n\nDRAFT: to be reviewed and approved by the staff member on shift.`;
+  } else {
+    const fol = lines.filter(isFollow), sum = lines.filter(l => !isFollow(l));
+    out = `CASE NOTE · DRAFT\n${head}\n\nSUMMARY\n${list(sum)}\n\nNEXT STEPS\n${list(fol)}\n\nStaff judgment / observations:\n[Worker to add in their own words]\n\nDRAFT: AI does not add judgments about residents. To be reviewed and approved by the worker who was present.`;
+  }
+  $('draftOut').value = out; $('staffCheck').disabled = false; $('staffCheck').checked = false; $('saveDraftBtn').disabled = true;
+});
+$('staffCheck').addEventListener('change', e => { $('saveDraftBtn').disabled = !e.target.checked; });
+$('saveDraftBtn').addEventListener('click', () => {
+  savedDrafts++; $('savedCount').textContent = `Approved drafts this session: ${savedDrafts}`;
+  $('draftOut').value = ''; $('bullets').value = ''; $('staffCheck').checked = false; $('staffCheck').disabled = true; $('saveDraftBtn').disabled = true;
+  toast('Approved by staff and saved (demo only, nothing stored).');
+});
+
+/* ---------- sample week (fictional) ---------- */
+$('sampleBtn').addEventListener('click', async () => {
+  reset();
+  const base = new Date(); const d = k => { const x = new Date(base); x.setDate(x.getDate() - k); return x.toISOString().slice(0,10); };
+  const D = ['Car / vehicle','Street / park / outdoors','Unsafe home','Co-ed shelter','Friend / family','Not shared'];
+  const R = ['Self-referral','Hospital / health provider','Community agency','Police / emergency services'];
+  const rows = [
+    [9,'22:40','Single woman','40–54',1,0,{initial:'M',year:1983,last4:'0001'}],
+    [8,'23:15','Single woman','25–39',0,5,null],
+    [8,'21:05','Single woman','40–54',0,0,{initial:'M',year:1983,last4:'0001'}],
+    [8,'23:50','Single woman','Under 25',2,1,{initial:'T',year:2003,last4:''}],
+    [7,'20:30','Woman with children / family','25–39',2,4,{initial:'A',year:1991,last4:'0002'}],
+    [6,'22:10','Single woman','55+',3,3,null],
+    [6,'19:45','Single woman','40–54',0,0,{initial:'M',year:1983,last4:'0001'}],
+    [6,'23:20','Single woman','25–39',1,2,{initial:'J',year:1995,last4:'0003'}],
+    [6,'21:35','Single woman','Under 25',2,1,{initial:'T',year:2003,last4:''}],
+    [5,'22:55','Single woman','40–54',0,5,null],
+    [4,'20:15','Woman with children / family','25–39',2,4,{initial:'A',year:1991,last4:'0002'}],
+    [4,'23:40','Single woman','25–39',1,2,{initial:'J',year:1995,last4:'0003'}],
+    [4,'21:00','Single woman','40–54',0,1,{initial:'M',year:1982,last4:''}],
+    [3,'22:30','Accessible bed needed','55+',1,3,{initial:'R',year:1960,last4:'0004'}],
+    [2,'20:50','Single woman','25–39',0,0,null],
+    [2,'23:05','Single woman','Under 25',2,1,{initial:'T',year:2003,last4:''}],
+    [2,'21:25','Single woman','25–39',3,2,{initial:'K',year:1988,last4:'0005'}],
+    [1,'22:45','Single woman','40–54',0,0,{initial:'M',year:1983,last4:'0001'}],
+    [0,'20:10','Single woman','25–39',1,2,{initial:'J',year:1995,last4:'0003'}],
+    [0,'23:30','Single woman','Not stated',0,5,null],
+  ];
+  for (const [k,time,need,age,ri,di,id] of rows){
+    const reason = need.startsWith('Woman with') ? 'No family unit available' : need.startsWith('Accessible') ? 'No accessible bed available' : 'All women-only beds full';
+    await addRecord({date:d(k), time, need, age, referral:R[ri], reason, destination:D[di]}, id);
+  }
+  renderAll(); toast('Loaded 20 fictional turn-aways, including one possible repeat to review.');
+});
+
+function reset(){ records = []; reviews = []; persons = {}; Object.keys(fuzzyKeys).forEach(k => delete fuzzyKeys[k]); personSeq = 0; recSeq = 0;
+  $('reportText').value = ''; $('edCheck').checked = false; $('edCheck').disabled = true; $('copyReportBtn').disabled = true; $('reportStatus').innerHTML = '<span class="pill">No draft</span>'; }
+$('clearBtn').addEventListener('click', () => { reset(); renderAll(); toast('Demo data cleared.'); });
+
+function renderAll(){ renderRecent(); renderReview(); renderDashboard(); }
+$('date').value = todayISO();
+renderAll();
+</script>
+</body>
+</html>
